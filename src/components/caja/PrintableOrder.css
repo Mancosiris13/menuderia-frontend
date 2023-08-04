@@ -1,0 +1,5 @@
+@media print {
+  .printable-content {
+    width: 5cm; /* Set the width to match the ticket width */
+  }
+}
