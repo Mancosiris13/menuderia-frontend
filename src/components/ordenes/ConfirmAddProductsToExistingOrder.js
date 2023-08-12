@@ -23,12 +23,12 @@ const ConfirmAddProductsToExistingOrder = ({
   }, [order, cuentaTotal]); // Listen for changes in the "order" prop to recalculate the total count
 
   return (
-    <div className="text-center">
+    <div className="text-center mb-10">
       {order.alimentos.length > 0 && (
         <>
           <p className="font-bold text-lg">Orden</p>
           <p className="mb-4">Mesero: {mesero}</p>
-          {paraLlevar ? (
+          {tableNumber < 1 ? (
             <p className="mb-4">Para Llevar</p>
           ) : (
             <p className="mb-4">Mesa: {tableNumber}</p>
@@ -87,10 +87,10 @@ const ConfirmAddProductsToExistingOrder = ({
               ))}
             </tbody>
           </table>
-          <div className="text-center pt-3">
-            <p className="mb-2">Total: {cuentaTotal}</p>
+          <div className="text-center pt-3 ">
+            <p className="mb-4">Total: {cuentaTotal}</p>
             <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded "
               onClick={handleConfirmOrder}
             >
               Confirmar Orden

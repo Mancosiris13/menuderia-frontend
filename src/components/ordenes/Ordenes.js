@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import DisplayOrders from './DisplayOrders';
 import { TbRefresh } from 'react-icons/tb';
 import OrderToConfirm from './OrderToConfirm';
+import { Link } from 'react-router-dom';
 
 const Ordenes = () => {
   const API_URL = process.env.REACT_APP_URL;
@@ -40,9 +41,9 @@ const Ordenes = () => {
     setToggleNewOrder(!toggleNewOrder);
   };
 
-  const handleRefreshOrders = () => {
-    window.location.reload();
-  };
+  // const handleRefreshOrders = () => {
+  //   window.location.reload();
+  // };
 
   const handleAddDishToOrder = (nombre, precio, categoria, id) => {
     console.log(
@@ -78,6 +79,13 @@ const Ordenes = () => {
 
     setNota('');
     setExtra('');
+
+    toast.success(
+      `${dishQuantity} ${nombre} ${extra} ${nota} se agrego a la orden`,
+      {
+        position: toast.POSITION.TOP_CENTER,
+      }
+    );
   };
 
   const handleDeleteDishFromOrder = (index) => {
@@ -150,22 +158,27 @@ const Ordenes = () => {
         >
           Nueva Orden
         </button>
-        <TbRefresh
-          className=" text-3x cursor-pointer"
-          onClick={handleRefreshOrders}
-        />
+        <Link to={'/ordenes'}>
+          <TbRefresh
+            className=" text-3x cursor-pointer"
+            // onClick={handleRefreshOrders}
+          />
+        </Link>
       </div>
 
       {toggleNewOrder && (
         <>
-          <div>
-            <div className="flex justify-around mt-8">
-              <div>
-                <p>Mesero:</p>
+          <div className="container mx-auto p-4">
+            <div className="flex flex-col md:flex-row justify-around mt-8 space-y-4 md:space-y-0 md:space-x-4">
+              <div className="w-full md:w-1/2 ">
+                <label className="block mb-2 font-bold text-lg text-center">
+                  Mesero:
+                </label>
                 <select
-                  className="border border-black w-28 text-center bg-orange-200"
+                  className="w-full border border-black p-2 bg-white rounded-md text-center"
                   onChange={(event) => setMesero(event.target.value)}
                   placeholder="Seleccionar Mesero"
+                  value={mesero}
                 >
                   <option value="">Seleccionar</option>
                   <option value="Eduardo">Eduardo</option>
@@ -176,35 +189,48 @@ const Ordenes = () => {
                   <option value="Osiris">Osiris</option>
                 </select>
               </div>
-              <div>
-                <p>Para llevar</p>
-                <input type="checkbox" onChange={handleParaLllevar}></input>
+              <div className="w-full md:w-1/4 flex items-center text-center">
+                <label className="block mr-2 text-center">Para llevar</label>
+                <input
+                  type="checkbox"
+                  onChange={handleParaLllevar}
+                  checked={paraLlevar}
+                  className="h-6 w-6"
+                />
               </div>
             </div>
 
-            <p className="mt-4">Mesa:</p>
-
-            <select
-              className="border border-black w-20 text-center bg-orange-200"
-              onChange={(event) => setMesaNumber(event.target.value)}
-            >
-              <option value="0">0</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-              <option value="9">9</option>
-              <option value="10">10</option>
-              <option value="11">11</option>
-              <option value="12">12</option>
-              <option value="13">13</option>
-              <option value="14">14</option>
-              <option value="15">15</option>
-            </select>
+            {!paraLlevar && (
+              <>
+                <div className="mt-4 ">
+                  <label className="block mb-2 text-center font-bold text-lg">
+                    Mesa:
+                  </label>
+                  <select
+                    className="w-full border border-black p-2  bg-white rounded-md text-center"
+                    onChange={(event) => setMesaNumber(event.target.value)}
+                    value={mesaNumber}
+                  >
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                  </select>
+                </div>
+              </>
+            )}
 
             <MenudosSection
               setDishQuantity={setDishQuantity}

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { BsArrowUpRightSquareFill } from 'react-icons/bs';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import { PiArchiveBoxFill } from 'react-icons/pi';
+import { RiDeleteBin6Line } from 'react-icons/ri';
 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -14,6 +15,9 @@ const DisplayOrdersCaja = () => {
   const [showOrder, setShowOrder] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [orderToSearchAlimentoForDelete, setOrderToSearchAlimentoForDelete] =
+    useState(null);
+  const [alimentoIdToDelete, setAlimentoIdToDelete] = useState(null);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -148,13 +152,45 @@ const DisplayOrdersCaja = () => {
       });
   };
 
+  const handleDeleteProduct = (orderID, alimentoID) => {
+    console.log('order id to find:', orderID);
+    console.log('alimeto Id to delete: ', alimentoID);
+    axios
+      .delete(`${API_URL}/orders/${orderID}/delete/${alimentoID}`)
+      .then((response) => {
+        console.log(response);
+        toast.success('Alimento Eliminado Correctamente!', {
+          position: toast.POSITION.TOP_CENTER,
+        });
+
+        axios
+          .get(`${API_URL}/orders`)
+          .then((response) => {
+            const sortedOrders = response.data.sort((a, b) => a.mesa - b.mesa);
+
+            // Step 1: Filter orders with table number less than 50
+            const filteredOrders = sortedOrders.filter(
+              (order) => order.mesa < 50
+            );
+
+            // Step 2: Set the filtered orders to the state
+            setOrders(filteredOrders);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
   return (
     <div className="container mx-auto px-4 py-8 h-screen">
       <p className="text-xl font-bold mb-4 text-center">Ordenes Activas</p>
       <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {orders.map((order) => (
           <div key={order._id} style={{ flex: '1' }}>
-            <div className="border border-black m-2 p-1 printable-content">
+            <div className="border border-black m-2 p-1 printable-content rounded-md">
               <div className="flex-col md:flex-row m-1">
                 <div className="flex justify-between">
                   <p className="mb-2 md:mb-0 font-bold">
@@ -167,27 +203,62 @@ const DisplayOrdersCaja = () => {
                 </div>
                 <p>Mesero: {order.mesero}</p>
               </div>
-              <ul className="list-disc mt-2">
-                {order.alimentos.map((alimento) => (
-                  <li
-                    key={alimento._id}
-                    className="list-none mb-1"
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                    }}
-                  >
-                    <span>
-                      {alimento.cantidad} x {alimento.nombre}
-                    </span>
-                    <span>${alimento.cantidad * alimento.precio}</span>
-                  </li>
-                ))}
-                <p className="font-bold">Total: {order.total}</p>
-              </ul>
+              <table className="w-full border-collapse text-sm mt-2">
+                <thead>
+                  <tr>
+                    <th className="py-1 px-2 bg-green-400 text-black text-center">
+                      Cantidad
+                    </th>
+                    <th className="py-1 px-2 bg-green-400 text-black text-center">
+                      Alimento
+                    </th>
+                    <th className="py-1 px-2 bg-green-400 text-black text-center">
+                      Precio
+                    </th>
+                    <th className="py-1 px-2 bg-green-400 text-black text-center"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {order.alimentos.map((alimento) => (
+                    <tr key={alimento._id}>
+                      <td className="py-1 px-2 border text-center">
+                        {alimento.cantidad}
+                      </td>
+                      <td className="py-1 px-2 border text-center">
+                        {alimento.nombre}
+                      </td>
+                      <td className="py-1 px-2 border text-center">
+                        ${alimento.cantidad * alimento.precio}
+                      </td>
+                      <td className="py-1 px-2 border text-center">
+                        <span>
+                          <RiDeleteBin6Line
+                            className="text-red-800 cursor-pointer"
+                            onClick={() =>
+                              handleDeleteProduct(order._id, alimento._id)
+                            }
+                          />
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                  <tr>
+                    <td
+                      className="font-bold py-1 px-2 border text-right"
+                      colSpan="2"
+                    >
+                      Total:
+                    </td>
+                    <td className="font-bold py-1 px-2 border text-center">
+                      ${order.total}
+                    </td>
+                    <td className="py-1 px-2 border"></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
             <button
-              className="border border-green-700 rounded-md bg-green-600 p-1"
+              className="border border-green-700 rounded-md bg-green-600 p-1 justify-center"
               onClick={() => printOrder(order)}
             >
               Imprimir Ticket de Pago Mesa{' '}

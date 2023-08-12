@@ -83,6 +83,7 @@ const DisplayOnlyTacos = () => {
   // Genera el contenido HTML que deseas imprimir
   const generatePrintContent = (order) => {
     // Puedes personalizar esta parte para diseñar el formato que deseas imprimir
+    const mesaLabel = order.mesa < 1 ? 'Para Llevar' : `Mesa: ${order.mesa}`;
     const content = `
       <html>
         <style>
@@ -100,7 +101,7 @@ const DisplayOnlyTacos = () => {
         </style>
         <body>
           <div class="order-div">
-            <p>Mesa: ${order.mesa}<p>
+          <p>${mesaLabel}</p>
             <p>Mesero: ${order.mesero}</p>
             <ul class="no-bullet">
               ${order.alimentos

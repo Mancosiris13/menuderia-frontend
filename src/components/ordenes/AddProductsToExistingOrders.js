@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import TacosSection from './TacosSection';
 import MenudosSection from './MenudosSection';
 import BebidasSection from './BebidasSection';
+import ExtrasSection from './ExtrasSection';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import DisplayOrders from './DisplayOrders';
@@ -46,10 +47,6 @@ const AddProductsToExistingOrders = () => {
     navigate('/ordenes');
   };
 
-  const handleRefreshOrders = () => {
-    window.location.reload();
-  };
-
   const handleAddDishToOrder = (nombre, precio, categoria, id) => {
     console.log('se pidieron ', dishQuantity, nombre, extra, 'en la mesa ', id);
     console.log(nombre);
@@ -77,6 +74,13 @@ const AddProductsToExistingOrders = () => {
 
     setNota('');
     setExtra('');
+
+    toast.success(
+      `${dishQuantity} ${nombre} ${extra} ${nota} se agrego a la orden`,
+      {
+        position: toast.POSITION.TOP_CENTER,
+      }
+    );
   };
 
   const handleDeleteDishFromOrder = (index) => {
@@ -149,36 +153,27 @@ const AddProductsToExistingOrders = () => {
   });
 
   return (
-    <div>
-      <div className=" mt-4 flex justify-around items-center">
+    <div className="px-4 py-2">
+      {' '}
+      {/* Add padding for overall content */}
+      <div className="flex justify-between items-center mb-4">
         <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold text-md p-2 rounded-md "
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold text-md p-2 rounded-md"
           onClick={handleReturn}
         >
           Regresar
         </button>
-        <TbRefresh
-          className=" text-3x cursor-pointer"
-          onClick={handleRefreshOrders}
-        />
+        {/* You can add a mobile-friendly menu icon/button here */}
       </div>
-
       {toggleNewOrder && (
-        <>
+        <div>
+          {tableNumber < 1 ? (
+            <p className="mt-2 mb-4">Mesa: Para Llevar</p>
+          ) : (
+            <p className="mt-2 mb-4">Mesa: {tableNumber}</p>
+          )}
+
           <div>
-            {/* <div className="flex justify-around mt-8">
-              <div>
-                <p>Para llevar</p>
-                <input type="checkbox" onChange={handleParaLllevar}></input>
-              </div>
-            </div> */}
-
-            {tableNumber < 1 ? (
-              <p className="mt-4">Mesa: Para Llevar</p>
-            ) : (
-              <p className="mt-4">Mesa:{tableNumber}</p>
-            )}
-
             <MenudosSection
               setDishQuantity={setDishQuantity}
               setExtra={setExtra}
@@ -192,11 +187,18 @@ const AddProductsToExistingOrders = () => {
               setNota={setNota}
               handleAddDishToOrder={handleAddDishToOrder}
             />
+
             <BebidasSection
               setDishQuantity={setDishQuantity}
               handleAddDishToOrder={handleAddDishToOrder}
             />
+
+            <ExtrasSection
+              setDishQuantity={setDishQuantity}
+              handleAddDishToOrder={handleAddDishToOrder}
+            />
           </div>
+
           <ConfirmAddProductsToExistingOrder
             order={order}
             mesero={mesero}
@@ -208,14 +210,8 @@ const AddProductsToExistingOrders = () => {
             handleDeleteDishFromOrder={handleDeleteDishFromOrder}
             handleConfirmOrder={handleConfirmOrder}
           />
-        </>
-      )}
-
-      {/* {!toggleNewOrder && (
-        <div>
-          <DisplayOrders />
         </div>
-      )} */}
+      )}
     </div>
   );
 };
